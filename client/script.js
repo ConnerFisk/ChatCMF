@@ -1,3 +1,11 @@
+/**
+ * This is the script.js file which contains the JavaScript code for
+ * my the ChatGPT clone, ChatCMF.
+ *
+ * @author Conner Fisk
+ * @since  Dec 29, 2022
+ */
+
 import bot from './assets/bot.svg';
 import user from './assets/user.svg';
 
