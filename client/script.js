@@ -73,9 +73,9 @@ function generateUniqueId() {
  * This function will allow us to distinguish between the user's and 
  * AI's message by having different background colors.
  * 
- * @param {Tells if it is an AI message or user} isAi 
- * @param {The message value} value 
- * @param {The message ID} uniqueId 
+ * @param {*} isAi // Tells if it is an AI message or user
+ * @param {*} value // The message value
+ * @param {*} uniqueId // The message ID
  */
 function chatStripe (isAi, value, uniqueId) {
     return (
