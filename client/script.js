@@ -10,7 +10,7 @@ import bot from './assets/bot.svg';
 import user from './assets/user.svg';
 
 const form = document.querySelector('form');
-const chatContainer = document.querySelector('#chat-container');
+const chatContainer = document.querySelector('#chat_container');
 
 let loadInterval;
 
@@ -24,14 +24,14 @@ function loader(element) {
     // Create an empty string.
     element.textContent = '';
     // Every 300ms, add a '.' to the text.
-    loadInterval = setInverval(() => {
+    loadInterval = setInterval(() => {
         element.textContent += '.';
         // Make sure to reset the text if there are 
         // more than three '.'
-        if(element.textContent === '....'){
+        if (element.textContent === '....') {
             element.textContent = '';
         }
-    }, 300)
+    }, 300);
 }
 
 /**
@@ -45,13 +45,13 @@ function typeText(element, text) {
     let index = 0;
     // Add a char every 20ms
     let interval = setInterval(() => {
-        if(index < text.length) {
+        if (index < text.length) {
             element.innerHTML += text.charAt(index);
             index++;
-        }else{
+        } else {
             clearInterval(interval);
         }
-    }, 20)
+    }, 20);
 }
 
 /**
@@ -60,11 +60,72 @@ function typeText(element, text) {
  * 
  * @returns 
  */
-function createUniqueId() {
+function generateUniqueId() {
     // Initialize the needed variables for each unique message.
     const curTime = Date.now();
     const randomNum = Math.random();
     const hexadecimalStr = randomNum.toString(16);
 
-    return 'id-${curTime}-${hexadecimalStr}';
+    return `id-${curTime}-${hexadecimalStr}`;
 }
+
+/**
+ * This function will allow us to distinguish between the user's and 
+ * AI's message by having different background colors.
+ * 
+ * @param {Tells if it is an AI message or user} isAi 
+ * @param {The message value} value 
+ * @param {The message ID} uniqueId 
+ */
+function chatStripe (isAi, value, uniqueId) {
+    return (
+        `
+        <div class="wrapper ${isAi && 'ai'}">
+            <div class="chat">
+                <div class="profile">
+                    <img 
+                      src=${isAi ? bot : user} 
+                      alt="${isAi ? 'bot' : 'user'}" 
+                    />
+                </div>
+                <div class="message" id=${uniqueId}>${value}</div>
+            </div>
+        </div>
+    `
+    )
+}
+
+/**
+ * 
+ * @param {*} e 
+ */
+const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = new FormData(form);
+
+    // chatStripe for the user.
+    chatContainer.innerHTML += chatStripe(false, data.get('prompt'));
+
+    // to clear the textarea input 
+    form.reset();
+
+    // chatStripe for the AI.
+    const uniqueId = generateUniqueId();
+    chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
+
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    const messageDiv = document.getElementById(uniqueId);
+
+    loader(messageDiv);
+}
+
+form.addEventListener('submit', handleSubmit);
+// Add functionality for the 'enter' key on the
+// user's keyboard to submit.
+form.addEventListener('keyup', (e) => {
+    if (e.keyCode === 13) {
+        handleSubmit(e)
+    }
+});
